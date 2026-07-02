@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SiteScope
 
-## Getting Started
+AI 驱动的网站安全 · 前端设计 · 法务合规全面审查服务。
 
-First, run the development server:
+## 快速开始
 
 ```bash
+npm install
+cp .env.example .env.local  # 填入 OPENAI_API_KEY 和 ACCESS_TOKEN
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+访问 http://localhost:3000，输入访问口令后即可开始审查。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 环境变量
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| 变量 | 说明 | 必填 |
+|------|------|------|
+| `OPENAI_API_KEY` | OpenAI API 密钥 | 是 |
+| `ACCESS_TOKEN` | 服务访问口令 (防滥用) | 否 (留空则无需口令) |
 
-## Learn More
+## 部署到 Vercel
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npx vercel --env OPENAI_API_KEY=sk-xxx --env ACCESS_TOKEN=your-passphrase
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 架构
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+用户 → 输入口令 → 输入 URL → POST /api/scan
+                               ↓
+                          fetch-site.ts (抓取 HTML + headers + robots + sitemap + 子页面)
+                               ↓
+                          prompt.ts (构建 system + user prompt)
+                               ↓
+                          OpenAI GPT-4o (流式生成审查报告)
+                               ↓
+                          前端实时渲染 + 下载 .md 文件
+```
 
-## Deploy on Vercel
+## 功能
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 口令保护，防止滥用
+- 流式报告生成，实时查看进度
+- 一键下载 Markdown 报告
+- 覆盖安全、前端、SEO、法务合规多维度审查
