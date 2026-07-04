@@ -1,19 +1,13 @@
 'use client';
 import { useState } from 'react';
-import { AuthGate } from '@/components/auth-gate';
 import { UrlForm } from '@/components/url-form';
 import { ReportView } from '@/components/report-view';
 
 export default function HomePage() {
-  const [token, setToken] = useState('');
   const [report, setReport] = useState('');
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  if (!token) {
-    return <AuthGate onAuthenticated={setToken} />;
-  }
 
   return (
     <main className="min-h-screen bg-gray-950 text-white">
@@ -24,7 +18,6 @@ export default function HomePage() {
             AI 驱动的网站安全 · 前端 · 合规全面审查
           </p>
           <UrlForm
-            token={token}
             onReport={(r, u) => { setReport(r); setUrl(u); }}
             onLoading={setLoading}
             onError={setError}
