@@ -498,13 +498,8 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
               </div>
             </div>
           )}
-        {/* URL hint + privacy link */}
-        <div className="flex items-center justify-between mt-1">
-          <p className="text-xs text-gray-500">{t('urlHint')}</p>
-          <a href="/privacy" className="text-xs text-gray-500 hover:text-gray-300 underline">
-            {lang === 'en' ? 'Privacy Policy' : '隐私政策'}
-          </a>
-        </div>
+        {/* URL hint */}
+        <p className="text-xs text-gray-500 mt-1">{t('urlHint')}</p>
       </form>
 
       {showPasscode && (
