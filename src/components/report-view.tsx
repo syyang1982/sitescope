@@ -159,35 +159,6 @@ export function ReportView({ report, url, loading, lang }: ReportViewProps) {
           </div>
         )}
       </div>
-
-      {/* Report legend */}
-      {report && !loading && (
-        <div className="mt-6 p-4 bg-gray-900/30 border border-gray-800 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">{t('reportLegend')}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
-            <div className="flex items-start gap-2">
-              <span className="text-blue-400 mt-0.5">🔧</span>
-              <div>
-                <p className="text-xs font-medium text-blue-400">{t('technicalDimension')}</p>
-                <p className="text-xs text-gray-500">{t('technicalDimensionDesc')}</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-2">
-              <span className="text-amber-400 mt-0.5">💼</span>
-              <div>
-                <p className="text-xs font-medium text-amber-400">{t('businessDimension')}</p>
-                <p className="text-xs text-gray-500">{t('businessDimensionDesc')}</p>
-              </div>
-            </div>
-          </div>
-          <ul className="text-xs text-gray-500 space-y-1 border-t border-gray-800 pt-2">
-            <li>• <span className="text-red-400">🔴 Critical</span> — {t('criticalDesc')}</li>
-            <li>• <span className="text-orange-400">🟠 Important</span> — {t('importantDesc')}</li>
-            <li>• <span className="text-gray-400">⚪ Minor</span> — {t('minorDesc')}</li>
-            <li>• {t('downloadHint')}</li>
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

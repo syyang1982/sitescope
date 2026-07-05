@@ -79,7 +79,8 @@ export function buildSystemPrompt(lang: ReportLang = 'en'): string {
 - 对于无法确定的问题，标注 [需人工/进一步验证]
 - 关联分析是最有价值的部分 — 找出跨维度的矛盾和风险
 - 报告必须使用简体中文输出
-- 保持客观专业，避免过度夸大风险`;
+- 保持客观专业，避免过度夸大风险
+- 不要在报告末尾添加图例或说明（severity legend），严重程度说明已由页面 UI 提供`;
   }
 
   // English (default)
@@ -158,7 +159,8 @@ Each finding must include:
 - For uncertain issues, mark as [Requires manual/further verification]
 - Cross-dimensional analysis is the most valuable part — find contradictions and risks across dimensions
 - The report MUST be written in English
-- Stay objective and professional; avoid overstating risks`;
+- Stay objective and professional; avoid overstating risks
+- Do NOT include a legend or severity key at the end of the report — the UI provides this separately`;
 }
 
 export function buildUserPrompt(data: SiteData, lang: ReportLang = 'en'): string {
