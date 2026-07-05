@@ -240,6 +240,8 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               className="h-12 text-base pl-4 pr-10 input-dark"
+              aria-label={t('urlPlaceholder')}
+              id="audit-url"
               required
             />
             {url && (
@@ -247,6 +249,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
                 type="button"
                 onClick={() => setUrl('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+                aria-label="Clear URL"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -270,6 +273,8 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
                 type="button"
                 onClick={() => setShowModelDropdown(!showModelDropdown)}
                 className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg border border-gray-700 bg-gray-800/50 hover:bg-gray-800 hover:border-gray-600 transition-colors"
+                aria-label={t('selectModel')}
+                aria-expanded={showModelDropdown}
               >
                 {useByok ? (
                   <span className="text-white">{byokModel || t('customModel')}</span>
@@ -366,7 +371,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
             </div>
 
           {/* Language toggle — right next to model selector */}
-          <div className="flex items-center gap-1 bg-gray-800/50 rounded-lg border border-gray-700 p-0.5 shrink-0">
+          <div className="flex items-center gap-1 bg-gray-800/50 rounded-lg border border-gray-700 p-0.5 shrink-0" role="group" aria-label="Language selection">
             <button
               type="button"
               onClick={() => onLangChange('en')}
@@ -375,6 +380,8 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
                   ? 'bg-blue-500/20 text-blue-400 font-medium'
                   : 'text-gray-400 hover:text-white'
               }`}
+              aria-label="English"
+              aria-pressed={lang === 'en'}
             >
               EN
             </button>
@@ -386,6 +393,8 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
                   ? 'bg-blue-500/20 text-blue-400 font-medium'
                   : 'text-gray-400 hover:text-white'
               }`}
+              aria-label="Chinese"
+              aria-pressed={lang === 'zh'}
             >
               中文
             </button>
@@ -456,8 +465,13 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
               </div>
             </div>
           )}
-        {/* URL hint */}
-        <p className="text-xs text-gray-500 mt-1">{t('urlHint')}</p>
+        {/* URL hint + privacy link */}
+        <div className="flex items-center justify-between mt-1">
+          <p className="text-xs text-gray-500">{t('urlHint')}</p>
+          <a href="/privacy" className="text-xs text-gray-500 hover:text-gray-300 underline">
+            {lang === 'en' ? 'Privacy Policy' : '隐私政策'}
+          </a>
+        </div>
       </form>
 
       {showPasscode && (

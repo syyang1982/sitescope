@@ -24,6 +24,14 @@ const bodySchema = z.object({
 export async function POST(req: Request) {
   const clientIp = getClientIp(req);
 
+  // CSRF: verify Origin/Referer matches this host
+  const origin = req.headers.get('origin') || req.headers.get('referer') || '';
+  const host = req.headers.get('host') || '';
+  if (origin && host && !origin.includes(host)) {
+    logAudit({ ip: clientIp, url: 'N/A', status: 'failed', error: 'csrf_origin_mismatch' });
+    return Response.json({ error: '请求来源无效' }, { status: 403 });
+  }
+
   // Rate limit check (before parsing body to save resources)
   const rateLimit = checkRateLimit(clientIp);
   if (!rateLimit.allowed) {
@@ -153,5 +161,25 @@ export async function POST(req: Request) {
     },
   });
 
-  return result.toTextStreamResponse({ headers: getRateLimitHeaders(rateLimit) });
+  return result.toTextStreamResponse({
+    headers: {
+      ...getRateLimitHeaders(rateLimit),
+      'Access-Control-Allow-Origin': host ? `https://${host}` : 'https://sitescope.vercel.app',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
+
+export async function OPTIONS(req: Request) {
+  const host = req.headers.get('host') || '';
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': host ? `https://${host}` : 'https://sitescope.vercel.app',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
+    },
+  });
 }

@@ -68,6 +68,16 @@ export default function HomePage() {
         )}
 
         <ReportView report={report} url={url} loading={loading} lang={lang} />
+
+        {/* Footer */}
+        <footer className="mt-16 pt-8 border-t border-gray-800 text-center text-xs text-gray-500 space-y-2">
+          <p>SiteScope — AI-Powered Website Audit</p>
+          <p>
+            <a href="/privacy" className="hover:text-gray-300 underline">Privacy Policy</a>
+            <span className="mx-2">·</span>
+            <a href="https://github.com/syyang1982/sitescope" className="hover:text-gray-300 underline" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </p>
+        </footer>
       </div>
     </main>
   );
