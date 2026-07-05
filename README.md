@@ -1,92 +1,204 @@
 # SiteScope
 
-AI 驱动的网站审查服务。输入任意 URL，自动抓取网站数据（HTML、HTTP 头、robots.txt、sitemap、子页面），交给 Xiaomi MiMo v2.5 Pro 生成涵盖安全、前端设计、SEO、法务合规的结构化审查报告。
+**AI-Powered Website Audit Platform** — Comprehensive security, frontend design, SEO, and legal compliance reviews in minutes, not days.
 
-## 安装
+> SiteScope replaces weeks of manual audits with instant, AI-driven analysis. Submit any URL and receive a structured report covering security vulnerabilities, accessibility gaps, SEO issues, and legal compliance risks — all with actionable remediation steps.
 
-需要 Node.js >= 20。
+---
+
+## Why SiteScope?
+
+### For Security Teams
+- **Instant vulnerability assessment** — Detect missing security headers (CSP, HSTS, X-Frame-Options), information leakage, SSRF risks, and form security issues in seconds
+- **Cross-dimensional analysis** — AI correlates findings across security, compliance, and frontend dimensions to surface hidden risks that single-dimension tools miss
+- **No infrastructure to manage** — SaaS-ready, deploy to Vercel in one command
+
+### For Compliance Officers
+- **Privacy regulation readiness** — Automated checks for GDPR, CCPA, and Australian Privacy Act compliance markers (privacy policy, cookie consent, tracking disclosure)
+- **Brand risk detection** — Identifies unauthorized third-party logo usage and misleading partnership claims
+- **Audit trail** — Every scan is logged with IP, timestamp, and model used for regulatory evidence
+
+### For Marketing & Product Teams
+- **SEO health check** — Validates robots.txt, sitemap.xml, canonical URLs, Open Graph tags, and crawlability
+- **Frontend quality audit** — WCAG 2.1 accessibility checks, mobile responsiveness, meta tag completeness
+- **Social sharing readiness** — Verifies Open Graph and Twitter Card metadata for optimal link previews
+
+### For Engineering Teams
+- **CI/CD integration ready** — RESTful API with streaming responses, perfect for automated pipeline checks
+- **Multi-model support** — Built-in MiMo models + BYOK (Bring Your Own Key) for OpenAI, Claude, DeepSeek, or any OpenAI-compatible endpoint
+- **Bilingual output** — Reports in English or Chinese, selectable per request
+
+---
+
+## Key Features
+
+| Feature | Description |
+|---------|-------------|
+| **5-Dimension Audit** | Security, Frontend Design, SEO, Legal Compliance, Cross-Dimensional Analysis |
+| **Real-Time Streaming** | Reports generate live — watch the AI analyze your site in real time |
+| **Multi-Model AI** | MiMo v2.5 Pro (recommended), MiMo v2.5 (fast), or bring your own model via BYOK |
+| **Bilingual UI** | Full English/Chinese interface with one-click toggle |
+| **Bilingual Reports** | Generate audit reports in English or Chinese |
+| **BYOK Mode** | Use your own API key, endpoint, and model — your key is never stored or logged |
+| **Rate Limiting** | 10 audits per IP per hour to prevent abuse |
+| **Audit Logging** | Every scan logged (IP, URL, model, timestamp) for compliance |
+| **SSRF Protection** | Blocks internal network scanning (localhost, private IPs) |
+| **Download & Copy** | One-click download as `.md` file or copy to clipboard |
+| **Progress Tracking** | Real-time progress indicators for each audit dimension |
+| **Access Control** | Passcode-gated access to prevent unauthorized usage |
+
+---
+
+## Quick Start
+
+### Prerequisites
+- Node.js >= 20
+- A MiMo API key from [Xiaomi MiMo](https://api.xiaomimimo.com)
+
+### Installation
 
 ```bash
-# 克隆仓库后进入项目目录
+git clone https://github.com/syyang1982/sitescope.git
 cd sitescope
-
-# 安装依赖
 npm install
 ```
 
-## 配置
-
-复制环境变量模板并填入你的值：
+### Configuration
 
 ```bash
 cp .env.example .env.local
 ```
 
-编辑 `.env.local`：
+Edit `.env.local`:
 
 ```env
-MIMO_API_KEY=sk-your-mimo-key         # 必填，MiMo API 密钥
-ACCESS_TOKEN=your-passphrase          # 必填，扫描提交时的访问口令
+MIMO_API_KEY=sk-your-mimo-key         # Required — MiMo API key
+ACCESS_TOKEN=your-passphrase          # Required — Access code for audit submission
 ```
 
-- `MIMO_API_KEY` — 用于调用 Xiaomi MiMo v2.5 Pro 生成审查报告
-- `ACCESS_TOKEN` — 用户点击"开始审查"后需要输入此口令才能开始扫描，用于防止滥用
-
-## 运行
+### Run
 
 ```bash
 npm run dev
 ```
 
-访问 http://localhost:3000。
+Visit http://localhost:3000.
 
-## 使用流程
+---
 
-1. 在输入框中输入目标网站 URL（例如 `example.com`）
-2. 点击「开始审查」
-3. 在弹出的口令验证框中输入访问口令
-4. 口令验证通过后，服务开始抓取网站数据并调用 AI 生成报告
-5. 报告实时流式显示，完成后可一键复制或下载为 `.md` 文件
+## Usage Flow
 
-## 审查维度
+1. Enter the target website URL (e.g., `example.com`)
+2. Click **Start Audit**
+3. Enter the access code in the verification dialog
+4. Select your preferred AI model and report language (EN/ZH)
+5. Watch the real-time progress as AI analyzes each dimension
+6. View the structured report with severity levels (Critical / Important / Minor)
+7. Download as `.md` or copy to clipboard
 
-| 维度 | 检查内容 |
-|------|----------|
-| 安全 | HTTP 响应头（HSTS/CSP/X-Frame-Options 等）、信息泄露、SSRF 风险、表单安全 |
-| 前端设计 | Meta 标签、WCAG 无障碍、移动端适配、内联样式 |
-| SEO | robots.txt、sitemap.xml、死链、可索引性 |
-| 法务合规 | 隐私政策、Cookie 同意、追踪脚本、品牌授权 |
-| 关联分析 | 交叉比对各维度发现，识别矛盾和业务风险 |
+---
 
-## 技术栈
+## Audit Dimensions
 
-- **框架：** Next.js 16 (App Router)
-- **UI：** React 19、Tailwind CSS 4、shadcn/ui
-- **AI：** Vercel AI SDK + Xiaomi MiMo v2.5 Pro（流式输出）
-- **数据抓取：** cheerio + fetch（被动扫描，仅 GET 请求）
-- **校验：** zod
+| Dimension | What's Checked |
+|-----------|----------------|
+| **Security** | HTTP headers (HSTS, CSP, X-Frame-Options, etc.), info leakage, SSRF risk, form security, tech stack fingerprinting |
+| **Frontend Design** | Meta tags, WCAG 2.1 accessibility, mobile responsiveness, inline styles, video autoplay |
+| **SEO** | robots.txt, sitemap.xml, dead links, indexability, canonical URLs |
+| **Legal Compliance** | Privacy policy, terms of service, cookie consent, tracking scripts, brand authorization, ABN/ACN display |
+| **Cross-Dimensional** | Contradictions across dimensions (e.g., "privacy policy claims no tracking, but Cloudflare Analytics detected") |
 
-## 项目结构
+---
+
+## API Reference
+
+### POST `/api/scan`
+
+Initiate an audit.
+
+**Request Body:**
+```json
+{
+  "url": "https://example.com",
+  "token": "your-access-code",
+  "model": "mimo-v2.5-pro",
+  "lang": "en",
+  "endpoint": "https://api.openai.com/v1",  // optional, for BYOK
+  "apiKey": "sk-...",                         // optional, for BYOK
+  "customModel": "gpt-4o"                     // optional, for BYOK
+}
+```
+
+**Response:** Streaming text/plain with the audit report in Markdown format.
+
+**Headers:**
+- `X-RateLimit-Limit: 10`
+- `X-RateLimit-Remaining: <count>`
+- `X-RateLimit-Window: 3600`
+
+### GET `/api/models`
+
+Returns available built-in models.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router + Turbopack) |
+| UI | React 19, Tailwind CSS 4, shadcn/ui |
+| AI | Vercel AI SDK + Xiaomi MiMo v2.5 Pro (streaming) |
+| Data Fetching | cheerio + fetch (passive scan, GET only) |
+| Validation | zod |
+| Hosting | Vercel (serverless, edge-ready) |
+
+---
+
+## Project Structure
 
 ```
 src/
 ├── app/
-│   ├── layout.tsx              # 根布局
-│   ├── page.tsx                # 首页 — URL 输入 + 报告展示
-│   └── api/scan/route.ts       # POST — 口令验证 + 数据抓取 + 流式 AI 报告
+│   ├── layout.tsx              # Root layout + metadata + OG tags
+│   ├── page.tsx                # Homepage — URL input + report display
+│   ├── privacy/page.tsx        # Privacy Policy page
+│   ├── robots.ts               # Dynamic robots.txt
+│   ├── sitemap.ts              # Dynamic sitemap.xml
+│   └── api/
+│       ├── scan/route.ts       # POST — auth + data fetch + streaming AI report
+│       └── models/route.ts     # GET — available models
 ├── components/
-│   ├── url-form.tsx            # URL 表单 + 口令验证弹窗
-│   └── report-view.tsx         # 流式报告渲染 + 复制/下载
+│   ├── url-form.tsx            # URL form + passcode dialog + model selector + BYOK
+│   └── report-view.tsx         # Streaming report renderer + copy/download
 └── lib/
-    ├── fetch-site.ts           # 抓取 HTML、headers、robots.txt、sitemap、子页面
-    ├── prompt.ts               # 系统提示词 + 用户提示词构建
-    └── auth.ts                 # 口令校验
+    ├── models.ts               # Model registry + BYOK provider
+    ├── prompt.ts               # System + user prompt builder (EN/ZH)
+    ├── fetch-site.ts           # HTML, headers, robots.txt, sitemap, subpages
+    ├── auth.ts                 # Passcode verification
+    ├── rate-limit.ts           # Per-IP rate limiting (10/hour)
+    ├── logger.ts               # Audit logging (IP, URL, model, timestamp)
+    ├── ssrf-guard.ts           # Internal network blocking
+    └── i18n.ts                 # UI translations (EN/ZH)
 ```
 
-## 部署到 Vercel
+---
+
+## Deploy to Vercel
 
 ```bash
-npx vercel --env MIMO_API_KEY=sk-xxx --env ACCESS_TOKEN=your-passphrase
+# One-command deploy
+vercel deploy --prod
+
+# Set environment variables
+vercel env add MIMO_API_KEY production
+vercel env add ACCESS_TOKEN production
 ```
 
-或在 Vercel 控制台中设置对应的环境变量后连接 Git 仓库自动部署。
+Or connect your GitHub repo to Vercel for automatic deployments on push.
+
+---
+
+## License
+
+MIT
