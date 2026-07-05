@@ -1,6 +1,6 @@
 # SiteScope
 
-AI 驱动的网站审查服务。输入任意 URL，自动抓取网站数据（HTML、HTTP 头、robots.txt、sitemap、子页面），交给 GPT-4o 生成涵盖安全、前端设计、SEO、法务合规的结构化审查报告。
+AI 驱动的网站审查服务。输入任意 URL，自动抓取网站数据（HTML、HTTP 头、robots.txt、sitemap、子页面），交给 Xiaomi MiMo v2.5 Pro 生成涵盖安全、前端设计、SEO、法务合规的结构化审查报告。
 
 ## 安装
 
@@ -25,11 +25,11 @@ cp .env.example .env.local
 编辑 `.env.local`：
 
 ```env
-OPENAI_API_KEY=sk-your-openai-key    # 必填，OpenAI API 密钥
+MIMO_API_KEY=sk-your-mimo-key         # 必填，MiMo API 密钥
 ACCESS_TOKEN=your-passphrase          # 必填，扫描提交时的访问口令
 ```
 
-- `OPENAI_API_KEY` — 用于调用 GPT-4o 生成审查报告
+- `MIMO_API_KEY` — 用于调用 Xiaomi MiMo v2.5 Pro 生成审查报告
 - `ACCESS_TOKEN` — 用户点击"开始审查"后需要输入此口令才能开始扫描，用于防止滥用
 
 ## 运行
@@ -62,7 +62,7 @@ npm run dev
 
 - **框架：** Next.js 16 (App Router)
 - **UI：** React 19、Tailwind CSS 4、shadcn/ui
-- **AI：** Vercel AI SDK + OpenAI GPT-4o（流式输出）
+- **AI：** Vercel AI SDK + Xiaomi MiMo v2.5 Pro（流式输出）
 - **数据抓取：** cheerio + fetch（被动扫描，仅 GET 请求）
 - **校验：** zod
 
@@ -86,7 +86,7 @@ src/
 ## 部署到 Vercel
 
 ```bash
-npx vercel --env OPENAI_API_KEY=sk-xxx --env ACCESS_TOKEN=your-passphrase
+npx vercel --env MIMO_API_KEY=sk-xxx --env ACCESS_TOKEN=your-passphrase
 ```
 
 或在 Vercel 控制台中设置对应的环境变量后连接 Git 仓库自动部署。

@@ -1,9 +1,14 @@
 import { streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { fetchSiteData } from '@/lib/fetch-site';
 import { verifyToken } from '@/lib/auth';
 import { buildSystemPrompt, buildUserPrompt } from '@/lib/prompt';
 import { z } from 'zod';
+
+const mimo = createOpenAI({
+  baseURL: 'https://api.xiaomimimo.com/v1',
+  apiKey: process.env.MIMO_API_KEY,
+});
 
 const bodySchema = z.object({
   url: z.string().min(1, '请输入 URL'),
@@ -34,9 +39,9 @@ export async function POST(req: Request) {
     );
   }
 
-  // Stream LLM response
+  // Stream LLM response via MiMo v2.5 Pro
   const result = streamText({
-    model: openai('gpt-4o'),
+    model: mimo('mimo-v2.5-pro'),
     system: buildSystemPrompt(),
     prompt: buildUserPrompt(siteData),
     temperature: 0.1,
