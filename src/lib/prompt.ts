@@ -50,13 +50,16 @@ export function buildSystemPrompt(lang: ReportLang = 'en'): string {
 使用 Markdown 格式输出报告，结构如下:
 
 1. 报告头部 (目标 URL, 日期, 技术栈概要)
-2. 🔴 关键 (Critical) — 需要立即修复的问题
-3. 🟠 重要 (Important) — 应尽快修复的问题
-4. ⚪ 普通 (Minor) — 建议改进的问题
-5. 📊 安全头清单总结 (已配置 / 缺失 / 需移除)
-6. 📋 合规清单总结
-7. 📈 统计汇总
-8. 🎯 优先修复建议
+2. 🔧 技术维度发现 (Technical Findings) — 工程师关注的问题
+   - 涵盖: 安全漏洞、HTTP 头配置、CSP 策略、前端性能、代码质量、技术栈问题、SEO 技术实现、开发模式暴露等
+   - 每个问题标注严重程度 (🔴 关键 / 🟠 重要 / ⚪ 普通)
+3. 💼 商务维度发现 (Business Findings) — 产品经理关注的问题
+   - 涵盖: 法律合规风险、品牌一致性、用户信任影响、隐私政策完整性、Cookie 合规、第三方授权风险、市场定位与实际能力差距、用户转化影响等
+   - 每个问题标注严重程度 (🔴 关键 / 🟠 重要 / ⚪ 普通)
+4. 📊 安全头清单总结 (已配置 / 缺失 / 需移除)
+5. 📋 合规清单总结
+6. 📈 统计汇总
+7. 🎯 优先修复建议 (分技术优先级和商务优先级)
 
 每个发现项包含:
 - 标题和严重程度
@@ -64,6 +67,11 @@ export function buildSystemPrompt(lang: ReportLang = 'en'): string {
 - 问题描述
 - 风险说明
 - 修复建议
+
+**分类规则:**
+- 如果一个问题同时涉及技术和商务，选择影响更大的维度归类，并在描述中提及另一个维度的关联影响
+- 技术维度: 主要影响系统安全性、性能、可维护性、SEO 技术指标的问题
+- 商务维度: 主要影响业务合规、用户信任、品牌形象、法律风险、市场竞争力的问题
 
 ## 重要规则
 
@@ -121,13 +129,16 @@ export function buildSystemPrompt(lang: ReportLang = 'en'): string {
 Use Markdown format for the report with the following structure:
 
 1. Report Header (Target URL, Date, Tech Stack Summary)
-2. 🔴 Critical — Issues requiring immediate remediation
-3. 🟠 Important — Issues that should be addressed soon
-4. ⚪ Minor — Improvement suggestions
-5. 📊 Security Headers Summary (Configured / Missing / Should Remove)
-6. 📋 Compliance Checklist Summary
-7. 📈 Statistics Summary
-8. 🎯 Priority Remediation Recommendations
+2. 🔧 Technical Findings — Issues engineers care about
+   - Covers: security vulnerabilities, HTTP header configuration, CSP policies, frontend performance, code quality, tech stack issues, SEO technical implementation, dev mode exposure, etc.
+   - Each issue tagged with severity (🔴 Critical / 🟠 Important / ⚪ Minor)
+3. 💼 Business Findings — Issues product managers care about
+   - Covers: legal compliance risks, brand consistency, user trust impact, privacy policy completeness, cookie compliance, third-party authorization risks, market positioning vs actual capability gaps, user conversion impact, etc.
+   - Each issue tagged with severity (🔴 Critical / 🟠 Important / ⚪ Minor)
+4. 📊 Security Headers Summary (Configured / Missing / Should Remove)
+5. 📋 Compliance Checklist Summary
+6. 📈 Statistics Summary
+7. 🎯 Priority Remediation Recommendations (separated by technical priority and business priority)
 
 Each finding must include:
 - Title and severity level
@@ -135,6 +146,11 @@ Each finding must include:
 - Problem description
 - Risk explanation
 - Remediation recommendation
+
+**Classification Rules:**
+- If an issue spans both technical and business dimensions, classify it under the dimension with greater impact and mention the cross-dimensional relevance in the description
+- Technical dimension: issues primarily affecting system security, performance, maintainability, SEO technical metrics
+- Business dimension: issues primarily affecting business compliance, user trust, brand reputation, legal risk, market competitiveness
 
 ## Important Rules
 

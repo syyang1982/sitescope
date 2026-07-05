@@ -66,6 +66,10 @@ const t = {
   importantDesc: { en: 'Issues that should be addressed soon', zh: '建议尽快处理的问题' },
   minorDesc: { en: 'Improvement suggestions', zh: '改进建议' },
   downloadHint: { en: 'Click "Download .md" to save the full report locally', zh: '点击「下载 .md 报告」可保存完整报告到本地' },
+  technicalDimension: { en: '🔧 Technical Findings', zh: '🔧 技术维度发现' },
+  technicalDimensionDesc: { en: 'Issues engineers care about — security, performance, code quality, infrastructure', zh: '工程师关注的问题 — 安全、性能、代码质量、基础设施' },
+  businessDimension: { en: '💼 Business Findings', zh: '💼 商务维度发现' },
+  businessDimensionDesc: { en: 'Issues product managers care about — compliance, brand trust, legal risk, user experience', zh: '产品经理关注的问题 — 合规、品牌信任、法律风险、用户体验' },
 
   // Footer
   hideKey: { en: 'Hide key', zh: '隐藏密钥' },

@@ -11,10 +11,64 @@ interface ReportViewProps {
   lang: Lang;
 }
 
+function wrapDimensionSections(html: string): string {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div>${html}</div>`, 'text/html');
+  const container = doc.body.firstElementChild as HTMLElement;
+  if (!container) return html;
+
+  const children = Array.from(container.children);
+  let inTechnical = false;
+  let inBusiness = false;
+  let wrapper: HTMLElement | null = null;
+
+  const result: Element[] = [];
+
+  for (const child of children) {
+    const text = child.textContent || '';
+    const isTechHeading = child.tagName === 'H2' && (text.includes('🔧') || text.includes('Technical Findings') || text.includes('技术维度'));
+    const isBizHeading = child.tagName === 'H2' && (text.includes('💼') || text.includes('Business Findings') || text.includes('商务维度'));
+    const isNextH2 = child.tagName === 'H2' && !isTechHeading && !isBizHeading;
+
+    if (isTechHeading) {
+      if (wrapper) result.push(wrapper);
+      wrapper = doc.createElement('div');
+      wrapper.className = 'report-section-technical';
+      wrapper.appendChild(child);
+      inTechnical = true;
+      inBusiness = false;
+    } else if (isBizHeading) {
+      if (wrapper) result.push(wrapper);
+      wrapper = doc.createElement('div');
+      wrapper.className = 'report-section-business';
+      wrapper.appendChild(child);
+      inTechnical = false;
+      inBusiness = true;
+    } else if (isNextH2 && (inTechnical || inBusiness)) {
+      if (wrapper) result.push(wrapper);
+      wrapper = null;
+      inTechnical = false;
+      inBusiness = false;
+      result.push(child);
+    } else if (wrapper) {
+      wrapper.appendChild(child);
+    } else {
+      result.push(child);
+    }
+  }
+  if (wrapper) result.push(wrapper);
+
+  return result.map(el => el.outerHTML).join('\n');
+}
+
 export function ReportView({ report, url, loading, lang }: ReportViewProps) {
   const t = useT(lang);
   const [copied, setCopied] = useState(false);
-  const html = useMemo(() => report ? marked(report) as string : '', [report]);
+  const html = useMemo(() => {
+    if (!report) return '';
+    const raw = marked(report) as string;
+    return wrapDimensionSections(raw);
+  }, [report]);
 
   function handleDownload() {
     const blob = new Blob([report], { type: 'text/markdown;charset=utf-8' });
@@ -109,8 +163,24 @@ export function ReportView({ report, url, loading, lang }: ReportViewProps) {
       {/* Report legend */}
       {report && !loading && (
         <div className="mt-6 p-4 bg-gray-900/30 border border-gray-800 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-300 mb-2">{t('reportLegend')}</h3>
-          <ul className="text-xs text-gray-500 space-y-1">
+          <h3 className="text-sm font-medium text-gray-300 mb-3">{t('reportLegend')}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+            <div className="flex items-start gap-2">
+              <span className="text-blue-400 mt-0.5">🔧</span>
+              <div>
+                <p className="text-xs font-medium text-blue-400">{t('technicalDimension')}</p>
+                <p className="text-xs text-gray-500">{t('technicalDimensionDesc')}</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-amber-400 mt-0.5">💼</span>
+              <div>
+                <p className="text-xs font-medium text-amber-400">{t('businessDimension')}</p>
+                <p className="text-xs text-gray-500">{t('businessDimensionDesc')}</p>
+              </div>
+            </div>
+          </div>
+          <ul className="text-xs text-gray-500 space-y-1 border-t border-gray-800 pt-2">
             <li>• <span className="text-red-400">🔴 Critical</span> — {t('criticalDesc')}</li>
             <li>• <span className="text-orange-400">🟠 Important</span> — {t('importantDesc')}</li>
             <li>• <span className="text-gray-400">⚪ Minor</span> — {t('minorDesc')}</li>

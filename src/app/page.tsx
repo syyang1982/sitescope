@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { UrlForm } from '@/components/url-form';
 import { ReportView } from '@/components/report-view';
 import { useT, type Lang } from '@/lib/i18n';
+import { APP_VERSION } from '@/lib/version';
 
 export default function HomePage() {
   const [report, setReport] = useState('');
@@ -76,6 +77,8 @@ export default function HomePage() {
             <a href="/privacy" className="hover:text-gray-300 underline">Privacy Policy</a>
             <span className="mx-2">·</span>
             <a href="https://github.com/syyang1982/sitescope" className="hover:text-gray-300 underline" target="_blank" rel="noopener noreferrer">GitHub</a>
+            <span className="mx-2">·</span>
+            <span>v{APP_VERSION}</span>
           </p>
         </footer>
       </div>
