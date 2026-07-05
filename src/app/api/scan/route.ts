@@ -7,6 +7,9 @@ import { logAudit, getClientIp } from '@/lib/logger';
 import { getModel, getCustomModel, isValidModel } from '@/lib/models';
 import { z } from 'zod';
 
+export const maxDuration = 60; // max for Vercel hobby plan
+export const runtime = 'nodejs';
+
 const bodySchema = z.object({
   url: z.string().min(1, '请输入网站 URL'),
   token: z.string().min(1, '请输入访问口令'),

@@ -14,7 +14,9 @@ interface ModelOption {
   name: string;
   provider: string;
   description: string;
+  descriptionEn: string;
   badge?: string;
+  badgeEn?: string;
 }
 
 interface UrlFormProps {
@@ -66,6 +68,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
           name: 'MiMo v2.5 Pro',
           provider: 'Xiaomi',
           description: '默认模型',
+          descriptionEn: 'Default model',
         }]);
       });
   }, []);
@@ -143,20 +146,32 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
         return;
       }
 
-      const reader = res.body?.getReader();
-      const decoder = new TextDecoder();
+      // Read response — try streaming first, fallback to full text
       let fullText = '';
 
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          fullText += chunk;
+      if (res.body) {
+        try {
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value, { stream: true });
+            fullText += chunk;
+            onReport(fullText, urlToScan);
+            updateProgressFromReport(fullText, initialProgress, updateProgress);
+          }
+          fullText += decoder.decode();
+        } catch {
+          // Stream reading failed, try reading as full text
+          fullText = await res.text();
           onReport(fullText, urlToScan);
-          updateProgressFromReport(fullText, initialProgress, updateProgress);
         }
-        fullText += decoder.decode();
+      } else {
+        // No body stream — read as full text
+        fullText = await res.text();
+        onReport(fullText, urlToScan);
       }
 
       // 全部完成
@@ -263,7 +278,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
                     <span className="text-white">{selectedModelInfo?.name || selectedModel}</span>
                     {selectedModelInfo?.badge && (
                       <span className="px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded">
-                        {selectedModelInfo.badge}
+                        {lang === 'en' ? (selectedModelInfo.badgeEn || selectedModelInfo.badge) : selectedModelInfo.badge}
                       </span>
                     )}
                   </>
@@ -294,17 +309,19 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
                             : 'hover:bg-gray-800 border border-transparent'
                         }`}
                       >
-                        <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-white">{model.name}</span>
                             <span className="text-[10px] text-gray-500">{model.provider}</span>
                             {model.badge && (
                               <span className="px-1.5 py-0.5 text-[10px] font-medium bg-blue-500/20 text-blue-400 rounded ml-auto">
-                                {model.badge}
+                                {lang === 'en' ? (model.badgeEn || model.badge) : model.badge}
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-400 mt-0.5 truncate">{model.description}</p>
+                          <p className="text-xs text-gray-400 mt-0.5 truncate">
+                            {lang === 'en' ? (model.descriptionEn || model.description) : model.description}
+                          </p>
                         </div>
                         {!useByok && model.id === selectedModel && (
                           <svg className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
