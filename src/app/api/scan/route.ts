@@ -1,7 +1,7 @@
 import { streamText } from 'ai';
 import { fetchSiteData } from '@/lib/fetch-site';
 import { verifyToken } from '@/lib/auth';
-import { buildSystemPrompt, buildUserPrompt, type ReportLang } from '@/lib/prompt';
+import { buildSystemPrompt, buildUserPrompt, type ReportLang, type ReportMode } from '@/lib/prompt';
 import { checkRateLimit, getRateLimitHeaders } from '@/lib/rate-limit';
 import { logAudit, getClientIp } from '@/lib/logger';
 import { getModel, getCustomModel, isValidModel } from '@/lib/models';
@@ -15,6 +15,7 @@ const bodySchema = z.object({
   token: z.string().min(1, '请输入访问口令'),
   model: z.string().optional(),
   lang: z.enum(['en', 'zh']).optional(),
+  mode: z.enum(['brief', 'full']).optional(),
   // BYOK fields — never logged or persisted
   endpoint: z.string().url('请输入有效的 API 地址').optional().or(z.literal('')),
   apiKey: z.string().optional(),
@@ -151,9 +152,10 @@ export async function POST(req: Request) {
 
   // Stream LLM response — apiKey is never included in logs
   const lang: ReportLang = parsed.data.lang === 'zh' ? 'zh' : 'en';
+  const mode: ReportMode = parsed.data.mode === 'brief' ? 'brief' : 'full';
   const result = streamText({
     model,
-    system: buildSystemPrompt(lang),
+    system: buildSystemPrompt(lang, mode),
     prompt: buildUserPrompt(siteData, lang),
     temperature: 0.1,
     onFinish: () => {

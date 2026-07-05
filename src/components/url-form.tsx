@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useT, type Lang } from '@/lib/i18n';
 
+type ReportMode = 'brief' | 'full';
+
 interface ProgressItem {
   name: string;
   status: 'pending' | 'running' | 'done';
@@ -46,6 +48,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
   const [byokModel, setByokModel] = useState('');
   const [byokApiKey, setByokApiKey] = useState('');
   const [showByokKey, setShowByokKey] = useState(false);
+  const [reportMode, setReportMode] = useState<ReportMode>('full');
   const abortRef = useRef<AbortController | null>(null);
   const passcodeInputRef = useRef<HTMLInputElement>(null);
   const modelDropdownRef = useRef<HTMLDivElement>(null);
@@ -110,7 +113,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
     abortRef.current = new AbortController();
 
     try {
-      const payload: Record<string, string> = { url: urlToScan, token, lang };
+      const payload: Record<string, string> = { url: urlToScan, token, lang, mode: reportMode };
       if (useByok) {
         payload.endpoint = byokEndpoint;
         payload.apiKey = byokApiKey;
@@ -193,7 +196,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
       setScanning(false);
       onLoading(false);
     }
-  }, [onReport, onLoading, onError, updateProgress, selectedModel, useByok, byokEndpoint, byokApiKey, byokModel, lang, t]);
+  }, [onReport, onLoading, onError, updateProgress, selectedModel, useByok, byokEndpoint, byokApiKey, byokModel, lang, t, reportMode]);
 
   function handleUrlSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -397,6 +400,36 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
               aria-pressed={lang === 'zh'}
             >
               中文
+            </button>
+          </div>
+
+          {/* Report mode toggle */}
+          <div className="flex items-center gap-1 bg-gray-800/50 rounded-lg border border-gray-700 p-0.5 shrink-0" role="group" aria-label={t('reportMode')}>
+            <button
+              type="button"
+              onClick={() => setReportMode('brief')}
+              className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                reportMode === 'brief'
+                  ? 'bg-amber-500/20 text-amber-400 font-medium'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              aria-pressed={reportMode === 'brief'}
+              title={t('briefScanDesc')}
+            >
+              {t('briefScan')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReportMode('full')}
+              className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
+                reportMode === 'full'
+                  ? 'bg-blue-500/20 text-blue-400 font-medium'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+              aria-pressed={reportMode === 'full'}
+              title={t('fullReportDesc')}
+            >
+              {t('fullReport')}
             </button>
           </div>
         </div>

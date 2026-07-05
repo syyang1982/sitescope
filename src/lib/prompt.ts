@@ -1,10 +1,17 @@
 import type { SiteData } from './fetch-site';
 
 export type ReportLang = 'en' | 'zh';
+export type ReportMode = 'brief' | 'full';
 
-export function buildSystemPrompt(lang: ReportLang = 'en'): string {
+export function buildSystemPrompt(lang: ReportLang = 'en', mode: ReportMode = 'full'): string {
   if (lang === 'zh') {
+    const modeInstruction = mode === 'brief'
+      ? `你正在执行**简要扫描**模式。报告只聚焦于发现的问题和风险，不需要提供修复建议和解决方案。`
+      : `你正在执行**全部报告**模式。报告需包含完整的问题发现、风险分析以及修复建议和解决方案。`;
+
     return `你是一位资深的全栈工程师、安全测试人员、页面设计人员和法务顾问。你的任务是对用户提供的网站进行全面细致的审查，并输出结构化的审查报告。
+
+${modeInstruction}
 
 ## 你的审查范围
 
@@ -59,14 +66,14 @@ export function buildSystemPrompt(lang: ReportLang = 'en'): string {
 4. 📊 安全头清单总结 (已配置 / 缺失 / 需移除)
 5. 📋 合规清单总结
 6. 📈 统计汇总
-7. 🎯 优先修复建议 (分技术优先级和商务优先级)
+${mode === 'full' ? '7. 🎯 优先修复建议 (分技术优先级和商务优先级)' : ''}
 
 每个发现项包含:
 - 标题和严重程度
 - 验证状态 [已用真实数据验证] 或 [需人工/进一步验证]
 - 问题描述
 - 风险说明
-- 修复建议
+${mode === 'full' ? '- 修复建议' : ''}
 
 **分类规则:**
 - 如果一个问题同时涉及技术和商务，选择影响更大的维度归类，并在描述中提及另一个维度的关联影响
@@ -84,7 +91,13 @@ export function buildSystemPrompt(lang: ReportLang = 'en'): string {
   }
 
   // English (default)
+  const modeInstructionEn = mode === 'brief'
+    ? `You are running in **Brief Scan** mode. Focus only on identifying issues and risks. Do NOT provide remediation recommendations or solutions.`
+    : `You are running in **Full Report** mode. Include complete issue identification, risk analysis, AND remediation recommendations and solutions.`;
+
   return `You are a senior full-stack engineer, security tester, UI/UX designer, and legal compliance consultant. Your task is to perform a comprehensive review of the website provided by the user and produce a structured audit report.
+
+${modeInstructionEn}
 
 ## Your Review Scope
 
@@ -139,14 +152,14 @@ Use Markdown format for the report with the following structure:
 4. 📊 Security Headers Summary (Configured / Missing / Should Remove)
 5. 📋 Compliance Checklist Summary
 6. 📈 Statistics Summary
-7. 🎯 Priority Remediation Recommendations (separated by technical priority and business priority)
+${mode === 'full' ? '7. 🎯 Priority Remediation Recommendations (separated by technical priority and business priority)' : ''}
 
 Each finding must include:
 - Title and severity level
 - Verification status [Verified with real data] or [Requires manual/further verification]
 - Problem description
 - Risk explanation
-- Remediation recommendation
+${mode === 'full' ? '- Remediation recommendation' : ''}
 
 **Classification Rules:**
 - If an issue spans both technical and business dimensions, classify it under the dimension with greater impact and mention the cross-dimensional relevance in the description

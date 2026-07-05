@@ -54,6 +54,13 @@ const t = {
   complianceReview: { en: 'Legal compliance review', zh: '法务合规审查' },
   crossAnalysis: { en: 'Cross-dimensional analysis', zh: '关联分析' },
 
+  // Report mode
+  reportMode: { en: 'Report Mode', zh: '报告模式' },
+  briefScan: { en: 'Brief Scan', zh: '简要扫描' },
+  briefScanDesc: { en: 'Issues & risks only', zh: '仅报告问题和风险' },
+  fullReport: { en: 'Full Report', zh: '全部报告' },
+  fullReportDesc: { en: 'Issues, risks & solutions', zh: '问题、风险及修复建议' },
+
   // Report view
   target: { en: 'Target', zh: '审查目标' },
   generating: { en: 'Generating...', zh: '生成中...' },
