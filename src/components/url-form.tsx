@@ -410,7 +410,7 @@ export function UrlForm({ onReport, onLoading, onError, onProgress, lang, onLang
               onClick={() => setReportMode('brief')}
               className={`px-2.5 py-1 text-xs rounded-md transition-colors ${
                 reportMode === 'brief'
-                  ? 'bg-amber-500/20 text-amber-400 font-medium'
+                  ? 'bg-blue-500/20 text-blue-400 font-medium'
                   : 'text-gray-400 hover:text-white'
               }`}
               aria-pressed={reportMode === 'brief'}
