@@ -14,8 +14,8 @@ export default function HomePage() {
   const t = useT(lang);
 
   return (
-    <main className="min-h-screen bg-gray-950 text-white">
-      <div className="container mx-auto px-4 py-16">
+    <main className="min-h-screen bg-gray-950 text-white flex flex-col">
+      <div className="container mx-auto px-4 py-16 flex-1">
         <div className="mb-12">
           <h1 className="text-center text-5xl font-bold mb-4">
             <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
@@ -69,19 +69,19 @@ export default function HomePage() {
         )}
 
         <ReportView report={report} url={url} loading={loading} lang={lang} />
-
-        {/* Footer */}
-        <footer className="mt-16 pt-8 border-t border-gray-800 text-center text-xs text-gray-500 space-y-2">
-          <p>SiteScope — AI-Powered Website Audit</p>
-          <p>
-            <a href="/privacy" className="hover:text-gray-300 underline">Privacy Policy</a>
-            <span className="mx-2">·</span>
-            <a href="https://github.com/syyang1982/sitescope" className="hover:text-gray-300 underline" target="_blank" rel="noopener noreferrer">GitHub</a>
-            <span className="mx-2">·</span>
-            <span>v{APP_VERSION}</span>
-          </p>
-        </footer>
       </div>
+
+      {/* Footer — always at the bottom of the viewport */}
+      <footer className="mt-auto pt-8 pb-6 border-t border-gray-800 text-center text-xs text-gray-500 space-y-2">
+        <p>SiteScope — AI-Powered Website Audit</p>
+        <p>
+          <a href="/privacy" className="hover:text-gray-300 underline">Privacy Policy</a>
+          <span className="mx-2">·</span>
+          <a href="https://github.com/syyang1982/sitescope" className="hover:text-gray-300 underline" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <span className="mx-2">·</span>
+          <span>v{APP_VERSION}</span>
+        </p>
+      </footer>
     </main>
   );
 }
