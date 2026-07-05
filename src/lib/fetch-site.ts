@@ -1,4 +1,7 @@
 import * as cheerio from 'cheerio';
+import { isAllowedTarget } from './ssrf-guard';
+
+const MAX_BODY_BYTES = 2 * 1024 * 1024; // 2MB per response
 
 export interface SiteData {
   url: string;
@@ -14,6 +17,29 @@ function normalizeUrl(url: string): string {
   return url;
 }
 
+async function readBodyWithLimit(body: ReadableStream<Uint8Array> | null): Promise<string> {
+  if (!body) return '';
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAX_BODY_BYTES) {
+      reader.cancel();
+      // Return what we have so far, truncated
+      const decoder = new TextDecoder();
+      return chunks.map(c => decoder.decode(c, { stream: true })).join('').slice(0, MAX_BODY_BYTES);
+    }
+    chunks.push(value);
+  }
+
+  const decoder = new TextDecoder();
+  return chunks.map(c => decoder.decode(c, { stream: true })).join('');
+}
+
 async function safeFetch(url: string, timeout = 10000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeout);
@@ -25,7 +51,8 @@ async function safeFetch(url: string, timeout = 10000) {
     clearTimeout(timer);
     const headers: Record<string, string> = {};
     res.headers.forEach((v, k) => { headers[k.toLowerCase()] = v; });
-    return { status: res.status, headers, body: await res.text(), error: null };
+    const body = await readBodyWithLimit(res.body);
+    return { status: res.status, headers, body, error: null };
   } catch (err) {
     clearTimeout(timer);
     return { status: 0, headers: {}, body: '', error: err instanceof Error ? err.message : String(err) };
@@ -34,6 +61,13 @@ async function safeFetch(url: string, timeout = 10000) {
 
 export async function fetchSiteData(rawUrl: string): Promise<SiteData> {
   const url = normalizeUrl(rawUrl);
+  const { hostname } = new URL(url);
+
+  // SSRF guard: block internal IPs
+  if (!(await isAllowedTarget(hostname))) {
+    throw new Error('不允许访问内部网络地址');
+  }
+
   const origin = new URL(url).origin;
 
   // Fetch main page + robots.txt + sitemap in parallel
@@ -42,6 +76,10 @@ export async function fetchSiteData(rawUrl: string): Promise<SiteData> {
     safeFetch(`${origin}/robots.txt`),
     safeFetch(`${origin}/sitemap.xml`),
   ]);
+
+  if (mainRes.error && !mainRes.body) {
+    throw new Error(mainRes.error);
+  }
 
   // Extract internal links from main page (max 5 subpages)
   const $ = cheerio.load(mainRes.body);

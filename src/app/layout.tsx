@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SiteScope — AI 网站审查",
-  description: "AI 驱动的网站安全、前端设计、法务合规全面审查服务",
+  title: "SiteScope — AI Website Audit",
+  description: "AI-powered website security, frontend design, and legal compliance audit",
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className="antialiased">
+    <html lang="en" className="antialiased">
       <body>{children}</body>
     </html>
   );
